@@ -6,6 +6,31 @@
   <title>Car Obstacle Game - Extreme Mode</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    #mobileControls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 10000;
+}
+
+#mobileControls button {
+  width: 60px;
+  height: 60px;
+  font-size: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  cursor: pointer;
+}
+
+#mobileControls button:active {
+  background: rgba(0, 150, 0, 0.8);
+}
+
     #player {
       position: absolute;
       width: 50px;
@@ -359,6 +384,19 @@ function gameOver() {
   gameRunning = false;
   document.getElementById("gameOverOptions").style.display = "block";
 }
+    // Mobile control buttons
+document.getElementById("btnUp").addEventListener("click", () => {
+  if (currentLane > 0) currentLane--;
+  playerY = lanes[currentLane];
+  player.style.top = `${playerY}px`;
+});
+
+document.getElementById("btnDown").addEventListener("click", () => {
+  if (currentLane < lanes.length - 1) currentLane++;
+  playerY = lanes[currentLane];
+  player.style.top = `${playerY}px`;
+});
+
   </script>
   <div id="gameOverOptions" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
   background:#222; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.7); text-align:center; z-index:10000;">
@@ -371,5 +409,12 @@ function gameOver() {
     Quit
   </a>
 </div>
+  <!-- Mobile Controls -->
+<div id="mobileControls">
+  <button id="btnUp">⬆️</button>
+  <button id="btnDown">⬇️</button>
+</div>
+
 </body>
 </html>
+
