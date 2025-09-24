@@ -2,237 +2,374 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Obstacle Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Obstacle Game - Extreme Mode</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background-image:url('https://i.pinimg.com/originals/b2/0e/20/b20e20379e0def016644ab0b4cc1ebda.gif');
-      background-size: cover;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    #game-container {
-      width: 800px;
-      height: 600px;
-      position: relative;
-      background-image:url('https://i.pinimg.com/originals/e2/22/31/e22231fcde8429973891b6f858c75839.gif');
-      background-size: cover;
-      border: 5px solid #000;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    }
     #player {
       position: absolute;
-      width: 40px;
-      height: 40px;
-      background-color: #f39c12;
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      left: 600px;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      z-index: 10;
     }
     .obstacle {
       position: absolute;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
     }
-    .normal { background-color: #2ecc71; }
-    .fast { background-color: #e74c3c; }
-    .bouncing { background-color: #3498db; }
-    .reverse { background-color: #9b59b6; }
+    .normal { background-color: greenyellow; }
+    .fast { background-color: orange; }
+    .bouncing { background-color: whitesmoke; }
+    .reverse { background-color: deeppink; }
+
     #scoreDisplay {
       position: absolute;
       top: 10px;
-      left: 10px;
-      color: #fff;
-      font-size: 1.5em;
+      left: 700px;
+      color: goldenrod;
+      font-family: 'Arial', sans-serif;
+      font-size: 20px;
       font-weight: bold;
-      z-index: 20;
-    }
-    #gameOverOptions {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.8);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-      text-align: center;
-      z-index: 1000;
-      display: none;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 1em;
-      cursor: pointer;
-      border-radius: 5px;
-      border: none;
-      color: white;
-    }
-    #reviveBtn { background-color: #4CAF50; }
-    #restartBtn { background-color: #f44336; }
-    #instructions-box {
       background: rgba(0, 0, 0, 0.5);
-      padding: 15px;
+      padding: 10px;
       border-radius: 10px;
-      color: white;
+    }
+
+    #leaderboard {
+      display: none;
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background:black;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      z-index: 9999;
+    }
+
+    #leaderboard table {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    #leaderboard th, #leaderboard td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
       text-align: center;
-      margin-left: 20px; /* Adjust spacing from the game box */
+    }
+
+    #showLeaderboard {
+      position: absolute;
+      top: 10px;
+      right: 30px;
+      padding: 10px 20px;
+      background: navy;
+      color: red;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
-<body>
-  <div id="game-container">
-    <div id="player"></div>
-    <div id="scoreDisplay">Score: 0 | Lives: 3</div>
-  </div>
+<body id="lk">
+  <marquee class="marq" bgcolor="Green" direction="left" loop="">
+    <div class="geek1">Press arrowup and arrowdown key to move! HOPE YOU LOVED THE GAME.VISIT AGAIN!</div>
+  </marquee>
 
-  <div id="instructions-box">
-    <p>Press right and left arrow key for moving</p>
-  </div>
+  <audio id="bgMusic" src="victory-awaits-in-the-gaming-universe_astronaut-265184.mp3" loop autoplay></audio>
+  <audio id="coinSound" src="coin.wav"></audio>
+  <audio id="crashSound" src="crash.wav"></audio>
 
-  <div id="gameOverOptions">
-    <h2>Game Over!</h2>
-    <p id="finalScore" style="font-size: 1.2em;"></p>
-    <button id="reviveBtn">Watch Ad for a Revive!</button>
-    <button id="restartBtn">Restart Game</button>
+  <div id="player"></div>
+  <div id="scoreDisplay">Score: 0 | Lives: 3</div>
+  <button id="showLeaderboard">Show Leaderboard</button>
+
+  <div id="leaderboard">
+    <h3>Top Players</h3>
+    <table>
+      <thead>
+        <tr><th>Username</th><th>Highest Score</th></tr>
+      </thead>
+      <tbody id="leaderboardBody"></tbody>
+    </table>
   </div>
 
   <script>
-    const gameContainer = document.getElementById("game-container");
-    const player = document.getElementById("player");
-    const scoreDisplay = document.getElementById("scoreDisplay");
-    const gameOverOptions = document.getElementById("gameOverOptions");
-    const reviveBtn = document.getElementById("reviveBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    
-    let score = 0;
-    let lives = 3;
     let gameRunning = true;
-    let playerPositionX = gameContainer.offsetWidth / 2 - 20; // Center the player
-    let playerPositionY = gameContainer.offsetHeight - 50; // Place player near the bottom
-    let obstacles = [];
-    let obstacleSpeed = 2; // Initial speed
+    class Stack {
+      constructor() { this.items = []; }
+      push(item) { this.items.push(item); }
+      pop() { return this.items.pop(); }
+    }
 
-    player.style.left = `${playerPositionX}px`;
-    player.style.top = `${playerPositionY}px`;
+    class Node {
+      constructor(data) { this.data = data; this.next = null; }
+    }
+
+    class LinkedList {
+      constructor() { this.head = null; }
+      add(data) {
+        const newNode = new Node(data);
+        if (!this.head) this.head = newNode;
+        else {
+          let current = this.head;
+          while (current.next) current = current.next;
+          current.next = newNode;
+        }
+      }
+    }
+
+    class TreeNode {
+      constructor(score) { this.score = score; this.left = null; this.right = null; }
+    }
+
+    class BinaryTree {
+      constructor() { this.root = null; }
+      insert(score) {
+        const newNode = new TreeNode(score);
+        if (!this.root) this.root = newNode;
+        else this.#insertNode(this.root, newNode);
+      }
+      #insertNode(node, newNode) {
+        if (newNode.score < node.score) node.left ? this.#insertNode(node.left, newNode) : node.left = newNode;
+        else node.right ? this.#insertNode(node.right, newNode) : node.right = newNode;
+      }
+      findMax(node = this.root) { return node?.right ? this.findMax(node.right) : node?.score ?? 0; }
+    }
+
+    const lanes = [100, 220, 340, 460];
+    let currentLane = 1;
+    const player = document.getElementById("player");
+    let playerY = lanes[currentLane];
+    player.style.top = `${playerY}px`;
+
+    const scoreStack = new Stack();
+    const obstacleList = new LinkedList();
+    const highScoreTree = new BinaryTree();
+    let score = 0, lives = 3;
+
+    const coinSound = document.getElementById("coinSound");
+    const crashSound = document.getElementById("crashSound");
 
     document.addEventListener("keydown", (e) => {
-      if (!gameRunning) return;
-      if (e.key === "ArrowLeft" && playerPositionX > 0) {
-        playerPositionX -= 15;
-      }
-      if (e.key === "ArrowRight" && playerPositionX < gameContainer.offsetWidth - 40) {
-        playerPositionX += 15;
-      }
-      player.style.left = `${playerPositionX}px`;
+      if (e.key === "ArrowUp" && currentLane > 0) currentLane--;
+      if (e.key === "ArrowDown" && currentLane < lanes.length - 1) currentLane++;
+      playerY = lanes[currentLane];
+      player.style.top = `${playerY}px`;
     });
 
-    function createObstacle() {
-      if (!gameRunning) return;
-
-      const types = [
-        { type: "normal", speed: obstacleSpeed, bounce: false },
-        { type: "fast", speed: obstacleSpeed * 1.5, bounce: false },
-        { type: "bouncing", speed: obstacleSpeed, bounce: true },
-        { type: "reverse", speed: -obstacleSpeed * 1.2, bounce: false },
-      ];
-      const randomType = types[Math.floor(Math.random() * types.length)];
-      
-      const obstacle = document.createElement("div");
-      obstacle.className = `obstacle ${randomType.type}`;
-      obstacle.style.left = `${Math.random() * (gameContainer.offsetWidth - 40)}px`;
-      gameContainer.appendChild(obstacle);
-      
-      obstacles.push({
-        element: obstacle,
-        x: parseFloat(obstacle.style.left),
-        y: -40,
-        speed: randomType.speed,
-        bouncing: randomType.bouncing,
-        bounced: false,
-      });
+    function updateScore() {
+      score += 5;
+      scoreStack.push(score);
+      coinSound.currentTime = 0;
+      coinSound.play();
     }
 
-    function moveObstacles() {
-      if (!gameRunning) return;
-      obstacles.forEach((obstacle, index) => {
-        obstacle.y += obstacle.speed;
-        obstacle.element.style.top = `${obstacle.y}px`;
+    function handleCollision() {
+  crashSound.currentTime = 0;
+  crashSound.play();
+  if (lives > 0) lives--;
+  if (lives <= 0) {
+    const username = localStorage.getItem("username") || "Guest";
+    const finalScore = scoreStack.pop() || 0;
 
-        if (obstacle.y > gameContainer.offsetHeight && !obstacle.bounced) {
-            score += 10;
-            obstacle.element.remove();
-            obstacles.splice(index, 1);
-        }
+    fetch("save_score.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username, score: finalScore })
+    })
+    .then(res => res.json())
+    .then(data => {
+      updateLeaderboard();
+      setTimeout(() => {
+  alert(`Game Over! Highest Score for ${username}: ${data.highest}`);
+  gameRunning = false; // 🔴 Stop the loop
+  document.getElementById("gameOverOptions").style.display = "block";
+}, 300);
+    })
+    .catch(err => {
+      console.error("Score save error:", err);
+      alert("Game Over! But couldn't fetch highest score.");
+gameRunning = false;
+document.getElementById("bgMusic").pause();
+document.getElementById("gameOverOptions").style.display = "block";
+    });
+  }
+}
 
-        // Collision detection
-        const playerRect = player.getBoundingClientRect();
-        const obstacleRect = obstacle.element.getBoundingClientRect();
-        
-        if (
-          playerRect.left < obstacleRect.right &&
-          playerRect.right > obstacleRect.left &&
-          playerRect.top < obstacleRect.bottom &&
-          playerRect.bottom > obstacleRect.top
-        ) {
-          lives--;
-          obstacle.element.remove();
-          obstacles.splice(index, 1);
-          if (lives <= 0) {
-            gameOver();
+
+    function createObstacle() {
+      const types = [
+        { type: "normal", speed: 3, bounce: false, reverse: false },
+        { type: "fast", speed: 10, bounce: false, reverse: false },
+        { type: "bouncing", speed: 5, bounce: true, reverse: false },
+        { type: "reverse", speed: 12, bounce: false, reverse: true },
+      ];
+      const obstacleData = types[Math.floor(Math.random() * types.length)];
+      const obstacle = {
+        x: obstacleData.reverse ? -60 : window.innerWidth,
+        y: lanes[Math.floor(Math.random() * lanes.length)],
+        speed: obstacleData.speed,
+        type: obstacleData.type,
+        bounce: obstacleData.bounce,
+        reverse: obstacleData.reverse,
+        dy: obstacleData.bounce ? 3 : 0,
+        width: 50, height: 50,
+        div: document.createElement("div")
+      };
+
+      obstacle.div.className = `obstacle ${obstacle.type}`;
+      obstacle.div.style.left = `${obstacle.x}px`;
+      obstacle.div.style.top = `${obstacle.y}px`;
+      document.body.appendChild(obstacle.div);
+      obstacleList.add(obstacle);
+    }
+
+    function moveObstacles(playerRect) {
+      let current = obstacleList.head;
+      let prev = null;
+
+      while (current) {
+        let obstacle = current.data;
+        if (obstacle.reverse) obstacle.x += obstacle.speed;
+        else obstacle.x -= obstacle.speed;
+
+        if (obstacle.bounce) {
+          obstacle.y += obstacle.dy;
+          if (obstacle.y <= 0 || obstacle.y >= window.innerHeight - obstacle.height) {
+            obstacle.dy *= -1;
           }
         }
-      });
-      scoreDisplay.innerHTML = `Score: ${score} | Lives: ${lives}`;
+
+        obstacle.div.style.left = `${obstacle.x}px`;
+        obstacle.div.style.top = `${obstacle.y}px`;
+
+        if (
+          playerRect.left < obstacle.x + 50 &&
+          playerRect.right > obstacle.x &&
+          playerRect.top < obstacle.y + 50 &&
+          playerRect.bottom > obstacle.y
+        ) {
+          handleCollision();
+          obstacle.div.remove();
+          if (prev) prev.next = current.next;
+          else obstacleList.head = current.next;
+        } else if ((obstacle.reverse && obstacle.x > window.innerWidth + 60) || (!obstacle.reverse && obstacle.x < -60)) {
+          updateScore();
+          obstacle.div.remove();
+          if (prev) prev.next = current.next;
+          else obstacleList.head = current.next;
+        } else {
+          prev = current;
+        }
+        current = current.next;
+      }
     }
 
-    function gameLoop() {
-      if (!gameRunning) return;
-      moveObstacles();
-      requestAnimationFrame(gameLoop);
+    function updateLeaderboard() {
+      fetch("leaderboard.php")
+        .then(res => res.json())
+        .then(data => {
+          const tableBody = document.getElementById("leaderboardBody");
+          tableBody.innerHTML = "";
+          data.forEach(entry => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${entry.username}</td><td>${entry.highest}</td>`;
+            tableBody.appendChild(row);
+          });
+          document.getElementById("leaderboard").style.display = "block";
+        })
+        .catch(err => console.error("Error loading leaderboard:", err));
     }
 
-    // New Game Over and Ad Logic
-    function gameOver() {
-      gameRunning = false;
-      document.getElementById("finalScore").textContent = `Final Score: ${score}`;
-      gameOverOptions.style.display = "block";
-    }
+    const button = document.getElementById("showLeaderboard");
+const leaderboard = document.getElementById("leaderboard");
 
-    function reviveWithAd() {
-      // This is the placeholder for the ad SDK.
-      // You will need to replace this with the platform-specific code.
-      // E.g., PokiSdk.Instance.commercialBreak()...
-      console.log("Simulating ad playback...");
-      setTimeout(() => {
-        // Upon successful ad playback:
-        lives = 1; // Give the player a second chance
-        gameRunning = true;
-        gameOverOptions.style.display = "none";
-        gameLoop();
-      }, 2000); // Simulate a 2-second ad
-    }
+button.addEventListener("click", () => {
+  if (leaderboard.style.display === "block") {
+    leaderboard.style.display = "none";
+    button.textContent = "Show Leaderboard";
+  } else {
+    updateLeaderboard(); // Load and show
+    button.textContent = "Hide Leaderboard";
+  }
+});
 
-    function restartGame() {
-      location.reload();
-    }
+function gameLoop() {
+  if (!gameRunning) return; // 🔴 Stop loop if game is over
 
-    // Event listeners for the new buttons
-    reviveBtn.addEventListener("click", reviveWithAd);
-    restartBtn.addEventListener("click", restartGame);
+  const playerRect = player.getBoundingClientRect();
+  moveObstacles(playerRect);
+  document.getElementById("scoreDisplay").innerHTML = `Score: ${score} | Lives: ${lives}`;
+  requestAnimationFrame(gameLoop);
+}
 
-    // Initial game start
+
     setInterval(createObstacle, 500);
     gameLoop();
+
+    // This is a placeholder for the platform's rewarded ad SDK.
+// You will replace this with Poki, Lagged, or another platform's specific code.
+function showRewardedAd(onComplete, onFailed) {
+  console.log("Ad request initiated...");
+  // In a real game, you would call a function like Poki.SDK.showRewardedAd().
+  // For this example, we simulate a successful ad after 2 seconds.
+  setTimeout(() => {
+    console.log("Ad completed successfully!");
+    onComplete(true);
+  }, 2000);
+}
+
+// Function to handle the player's reward.
+// You can customize the reward (e.g., add points, coins, etc.).
+function handleReward() {
+  lives = 3;
+  score = score;
+  gameRunning = true;
+  document.getElementById("gameOverOptions").style.display = "none";
+  gameLoop();
+  console.log("Player rewarded! Lives restored.");
+}
+
+// Function called when the 'Revive with Ad' button is clicked.
+function reviveWithAd() {
+  showRewardedAd(
+    (success) => {
+      if (success) {
+        handleReward();
+      } else {
+        alert("Ad failed to load. Please try again.");
+      }
+    },
+    () => {
+      alert("Ad could not be loaded. Please try again.");
+    }
+  );
+}
+
+// Update your existing collision logic to show the ad option.
+function gameOver() {
+  gameRunning = false;
+  document.getElementById("gameOverOptions").style.display = "block";
+}
   </script>
+  <div id="gameOverOptions" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+  background:#222; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.7); text-align:center; z-index:10000;">
+  <h2 style="color:white; margin-bottom:20px;">Game Over!</h2>
+  <button onclick="reviveWithAd()" style="padding:10px 20px; margin: 10px; font-size: 16px; cursor: pointer; border-radius: 5px; background-color: #4CAF50; color: white; border: none;">Watch Ad for a Revive!</button>
+  <button onclick="location.reload()" style="padding:10px 20px; margin-right:20px; background:limegreen; border:none; border-radius:8px; color:white; font-size:16px; cursor:pointer;">
+    Restart
+  </button>
+  <a href="s2.html" style="padding:10px 20px; background:crimson; border:none; border-radius:8px; color:white; font-size:16px; text-decoration:none;">
+    Quit
+  </a>
+</div>
 </body>
 </html>
