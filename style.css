@@ -1,0 +1,248 @@
+*{
+    padding: 0%;
+    margin: 0%;
+   color:whitesmoke ;
+}
+#one{
+    height: 50px;
+    background-color: black;
+    border: 3px solid brown;
+    position: fixed;
+    top:0px;
+    width: 1550px;
+    text-align: left;
+    color: red;
+    font-size: x-large;
+    animation: an2 3s ease-out infinite;
+}
+
+a{
+    text-align: center;
+    margin-right: 20px;
+    font-size: small;
+    
+}
+#o{
+    margin-right: 500px;
+    font-size: large;
+    left: 15px;
+}
+#t{
+    position: absolute;
+    top: 12px; 
+    left: 1050px
+    
+}
+#i{
+    margin-left: 450px;
+    text-align: center;
+    margin-right: 20px;
+    font-size: small;
+}
+#b{
+    position: fixed;
+    top: 0px;
+    left: 1300px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
+    background-color:green;
+    border-color: blue;
+    border-radius: 25%;
+}
+#box{
+    border: 5px solid black;
+    height: 730px;
+    width: 1520px;
+    position: relative;
+    left:0px;
+    top: 54px;
+    animation: anime 13s linear infinite;
+    
+}
+#m{
+    color: goldenrod;
+    position: fixed;
+    bottom: 0px;
+    animation: anm 3s linear infinite;
+}
+
+
+
+@keyframes anime{
+    from{background-image:url(https://thumbs.dreamstime.com/b/asphalt-highway-road-roadside-top-view-grass-76953638.jpg);
+        background-size: cover;}
+        to{background-image:url(https://media.istockphoto.com/id/1413625824/photo/the-drone-flies-over-the-track-during-traffic-with-many-interchanges-in-different-directions.jpg?s=612x612&w=0&k=20&c=pNu-XrlJIXKvilFNEDeEGJrUSYQg_DZN45shM6b2csg=);
+        background-size: cover;}
+}
+@keyframes an2{
+        from{
+            color:red}
+        to{
+            color: greenyellow;}
+}
+@keyframes anm{
+    from{
+        border:black 4px solid}
+    to{
+        border:blue 4px solid}
+}
+
+
+#w{
+    background-image:url('https://i.pinimg.com/originals/b2/0e/20/b20e20379e0def016644ab0b4cc1ebda.gif');
+    background-size: cover;
+}
+#button {
+    width: 200px;
+    height: 50px;
+    background-color: goldenrod;
+    color: whitesmoke;
+    font-size: 36px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    cursor: pointer;
+    animation: blink 1s infinite alternate;
+    font-style:italic;
+    text-underline-offset: none;
+    position: fixed;
+    top: 415px;
+    left: 660px;
+text-decoration: none;
+}
+#button1 {
+    width: 200px;
+    height: 50px;
+    background-color: goldenrod;
+    color: whitesmoke;
+    font-size: 36px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    cursor: pointer;
+    animation: blink 1s infinite alternate;
+    font-style:italic;
+    text-underline-offset: none;
+    position: fixed;
+    top: 345px;
+    left: 660px;
+text-decoration: none;
+}
+@keyframes blink {
+     from{ color: whitesmoke; }
+    to{ color:red; }
+}
+#l1{
+    background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHZhbjBtZGMzbmYxNWlrM3N6eWMzeXU5emVocWY1ZmUzd3d4aXZiNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l41lI3C51XtdvxUxq/giphy.gif');
+    background-size:cover;
+}
+#l{
+    font-size: 50px;
+    font-family:algerian;
+    position: fixed;
+    top: 300px;
+    left: 390px;
+    color: brown;
+    height: 100px;
+    width: 950px;
+}
+#yl{
+    position: fixed;
+    top: 0%;
+    left: 300px;
+    width: 800px;
+    height: 100px;
+}
+#box{
+    position: fixed;
+    top:10px;
+    right: 20px;
+    background-color: blue;
+    height: 15px;
+    text-decoration: none;
+}
+#bt{ 
+        width: 200px;
+        height: 50px;
+        background-color: greenyellow;
+        color: plum;
+        font-size:20px;
+        font-weight: bold;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        cursor: pointer;
+        font-style:italic;
+        position: fixed;
+        top: 500px;
+        left: 700px;
+    text-decoration: none;
+    }
+
+    .obstacle{
+        position: absolute; 
+        width: 200px; 
+        height: 200px;
+    }
+    .rock{
+        background-image: url('https://s1.1zoom.me/big0/782/BUGATTI_La_Voiture_Noire_Side_Black_Black_567142_1280x720.jpg');
+        background-size: cover;
+    }
+    .tree{
+        background-image: url('https://static.vecteezy.com/system/resources/previews/023/115/150/large_2x/abstract-futuristic-car-design-in-neon-color-wallpaper-black-background-generative-ai-photo.jpg');
+        background-size: cover;
+    }
+    #ch{
+        background-image: url('https://www.shutterstock.com/shutterstock/videos/15781360/thumb/1.jpg?ip=x480');
+        background-size: cover;
+        animation: a 7s infinite linear;
+    }
+    @keyframes a{
+        from{ background-image: url('https://www.shutterstock.com/shutterstock/videos/15781360/thumb/1.jpg?ip=x480');}
+            to{background-image: url('https://st.depositphotos.com/1000350/4770/i/450/depositphotos_47702305-stock-photo-asphalt-highway-with-road-markings.jpg');}
+    }
+    .player{
+        position: absolute; 
+        width: 100px; 
+        height: 100px; 
+        background-color:red; 
+        bottom: 20px; left: 100px;
+    }
+    #but{
+        width: 245px;
+        height: 50px;
+        background-color: blueviolet;
+        color: black;
+        font-size:20px;
+        font-weight: bold;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        cursor: pointer;
+        font-style:italic;
+        position: fixed;
+        top: 575px;
+        left: 680px;
+    text-decoration: none;
+    }
+    #lk{
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background: url('https://i.pinimg.com/originals/e2/22/31/e22231fcde8429973891b6f858c75839.gif') no-repeat center center/cover;
+    }
+    .marq{
+        position: fixed;
+        bottom: 0%;
+    }
+    #ad{
+        position: fixed;
+        top:10px;
+        right:45px;
+    }
