@@ -4,71 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Car Obstacle Game - Extreme Mode</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    #mobileControls {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 20px;
-  z-index: 10000;
-}
+    body {
+      margin: 0;
+      background: #111;
+      overflow: hidden;
+    }
 
-#mobileControls button {
-  width: 60px;
-  height: 60px;
-  font-size: 30px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  cursor: pointer;
-}
+    /* Game Wrapper */
+    #gameWrapper {
+      position: relative;
+      width: 90vw;
+      height: 70vh;
+      margin: auto;
+      border: 3px solid black;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #111;
+    }
 
-#mobileControls button:active {
-  background: rgba(0, 150, 0, 0.8);
-}
-
+    /* Player */
     #player {
       position: absolute;
-      width: 50px;
-      height: 50px;
+      width: 8%;   /* scales with wrapper */
+      height: 12%;
       background-color: red;
-      left: 600px;
       border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      left: 50%;
+      transform: translateX(-50%);
     }
+
+    /* Obstacles */
     .obstacle {
       position: absolute;
-      width: 50px;
-      height: 50px;
+      width: 8%;
+      height: 12%;
       border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
     }
     .normal { background-color: greenyellow; }
     .fast { background-color: orange; }
     .bouncing { background-color: whitesmoke; }
     .reverse { background-color: deeppink; }
 
+    /* Score Display */
     #scoreDisplay {
       position: absolute;
-      top: 10px;
-      left: 700px;
+      top: 5px;
+      left: 5px;
       color: goldenrod;
-      font-family: 'Arial', sans-serif;
-      font-size: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 1.2rem;
       font-weight: bold;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 10px;
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
     }
 
+    /* Leaderboard */
     #leaderboard {
       display: none;
       position: absolute;
-      top: 100px;
+      top: 80px;
       left: 50%;
       transform: translateX(-50%);
       background:black;
@@ -93,329 +91,149 @@
     #showLeaderboard {
       position: absolute;
       top: 10px;
-      right: 30px;
-      padding: 10px 20px;
+      right: 20px;
+      padding: 10px 15px;
       background: navy;
-      color: red;
+      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
+
+    /* Mobile Controls */
+    #mobileControls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 10000;
+    }
+
+    #mobileControls button {
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      cursor: pointer;
+    }
+    #mobileControls button:active {
+      background: rgba(0,150,0,0.8);
+    }
   </style>
 </head>
-<body id="lk">
-  <marquee class="marq" bgcolor="Green" direction="left" loop="">
-    <div class="geek1">Press arrowup and arrowdown key to move! HOPE YOU LOVED THE GAME.VISIT AGAIN!</div>
-  </marquee>
+<body>
+  <div id="gameWrapper">
+    <div id="player"></div>
+    <div id="scoreDisplay">Score: 0 | Lives: 3</div>
+    <button id="showLeaderboard">Show Leaderboard</button>
 
-  <audio id="bgMusic" src="victory-awaits-in-the-gaming-universe_astronaut-265184.mp3" loop autoplay></audio>
-  <audio id="coinSound" src="coin.wav"></audio>
-  <audio id="crashSound" src="crash.wav"></audio>
+    <div id="leaderboard">
+      <h3 style="color:white;">Top Players</h3>
+      <table>
+        <thead>
+          <tr><th>Username</th><th>Highest Score</th></tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-  <div id="player"></div>
-  <div id="scoreDisplay">Score: 0 | Lives: 3</div>
-  <button id="showLeaderboard">Show Leaderboard</button>
-
-  <div id="leaderboard">
-    <h3>Top Players</h3>
-    <table>
-      <thead>
-        <tr><th>Username</th><th>Highest Score</th></tr>
-      </thead>
-      <tbody id="leaderboardBody"></tbody>
-    </table>
+  <!-- Mobile Controls -->
+  <div id="mobileControls">
+    <button id="btnUp">⬆️</button>
+    <button id="btnDown">⬇️</button>
   </div>
 
   <script>
     let gameRunning = true;
-    class Stack {
-      constructor() { this.items = []; }
-      push(item) { this.items.push(item); }
-      pop() { return this.items.pop(); }
-    }
-
-    class Node {
-      constructor(data) { this.data = data; this.next = null; }
-    }
-
-    class LinkedList {
-      constructor() { this.head = null; }
-      add(data) {
-        const newNode = new Node(data);
-        if (!this.head) this.head = newNode;
-        else {
-          let current = this.head;
-          while (current.next) current = current.next;
-          current.next = newNode;
-        }
-      }
-    }
-
-    class TreeNode {
-      constructor(score) { this.score = score; this.left = null; this.right = null; }
-    }
-
-    class BinaryTree {
-      constructor() { this.root = null; }
-      insert(score) {
-        const newNode = new TreeNode(score);
-        if (!this.root) this.root = newNode;
-        else this.#insertNode(this.root, newNode);
-      }
-      #insertNode(node, newNode) {
-        if (newNode.score < node.score) node.left ? this.#insertNode(node.left, newNode) : node.left = newNode;
-        else node.right ? this.#insertNode(node.right, newNode) : node.right = newNode;
-      }
-      findMax(node = this.root) { return node?.right ? this.findMax(node.right) : node?.score ?? 0; }
-    }
-
-    const lanes = [100, 220, 340, 460];
-    let currentLane = 1;
+    const gameWrapper = document.getElementById("gameWrapper");
     const player = document.getElementById("player");
-    let playerY = lanes[currentLane];
-    player.style.top = `${playerY}px`;
 
-    const scoreStack = new Stack();
-    const obstacleList = new LinkedList();
-    const highScoreTree = new BinaryTree();
+    // ✅ Define lanes in percentages of wrapper height
+    const lanes = [10, 30, 50, 70];
+    let currentLane = 2;
+    player.style.top = lanes[currentLane] + "%";
+
     let score = 0, lives = 3;
-
-    const coinSound = document.getElementById("coinSound");
-    const crashSound = document.getElementById("crashSound");
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" && currentLane > 0) currentLane--;
       if (e.key === "ArrowDown" && currentLane < lanes.length - 1) currentLane++;
-      playerY = lanes[currentLane];
-      player.style.top = `${playerY}px`;
+      player.style.top = lanes[currentLane] + "%";
     });
 
-    function updateScore() {
-      score += 5;
-      scoreStack.push(score);
-      coinSound.currentTime = 0;
-      coinSound.play();
-    }
-
-    function handleCollision() {
-  crashSound.currentTime = 0;
-  crashSound.play();
-  if (lives > 0) lives--;
-  if (lives <= 0) {
-    const username = localStorage.getItem("username") || "Guest";
-    const finalScore = scoreStack.pop() || 0;
-
-    fetch("save_score.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: username, score: finalScore })
-    })
-    .then(res => res.json())
-    .then(data => {
-      updateLeaderboard();
-      setTimeout(() => {
-  alert(`Game Over! Highest Score for ${username}: ${data.highest}`);
-  gameRunning = false; // 🔴 Stop the loop
-  document.getElementById("gameOverOptions").style.display = "block";
-}, 300);
-    })
-    .catch(err => {
-      console.error("Score save error:", err);
-      alert("Game Over! But couldn't fetch highest score.");
-gameRunning = false;
-document.getElementById("bgMusic").pause();
-document.getElementById("gameOverOptions").style.display = "block";
+    // Mobile Controls
+    document.getElementById("btnUp").addEventListener("click", () => {
+      if (currentLane > 0) currentLane--;
+      player.style.top = lanes[currentLane] + "%";
     });
-  }
-}
 
+    document.getElementById("btnDown").addEventListener("click", () => {
+      if (currentLane < lanes.length - 1) currentLane++;
+      player.style.top = lanes[currentLane] + "%";
+    });
 
+    // Create Obstacles
     function createObstacle() {
       const types = [
-        { type: "normal", speed: 3, bounce: false, reverse: false },
-        { type: "fast", speed: 10, bounce: false, reverse: false },
-        { type: "bouncing", speed: 5, bounce: true, reverse: false },
-        { type: "reverse", speed: 12, bounce: false, reverse: true },
+        { type: "normal", speed: 0.6, bounce: false, reverse: false },
+        { type: "fast", speed: 1.2, bounce: false, reverse: false },
+        { type: "bouncing", speed: 0.8, bounce: true, reverse: false },
+        { type: "reverse", speed: 1.2, bounce: false, reverse: true },
       ];
-      const obstacleData = types[Math.floor(Math.random() * types.length)];
-      const obstacle = {
-        x: obstacleData.reverse ? -60 : window.innerWidth,
-        y: lanes[Math.floor(Math.random() * lanes.length)],
-        speed: obstacleData.speed,
-        type: obstacleData.type,
-        bounce: obstacleData.bounce,
-        reverse: obstacleData.reverse,
-        dy: obstacleData.bounce ? 3 : 0,
-        width: 50, height: 50,
-        div: document.createElement("div")
-      };
+      const data = types[Math.floor(Math.random() * types.length)];
+      const obstacle = document.createElement("div");
+      obstacle.className = "obstacle " + data.type;
+      obstacle.style.top = lanes[Math.floor(Math.random() * lanes.length)] + "%";
+      obstacle.style.left = data.reverse ? "-10%" : "100%";
+      gameWrapper.appendChild(obstacle);
 
-      obstacle.div.className = `obstacle ${obstacle.type}`;
-      obstacle.div.style.left = `${obstacle.x}px`;
-      obstacle.div.style.top = `${obstacle.y}px`;
-      document.body.appendChild(obstacle.div);
-      obstacleList.add(obstacle);
-    }
+      let posX = data.reverse ? -10 : 100;
+      let posY = parseFloat(obstacle.style.top);
+      let dy = data.bounce ? 1 : 0;
 
-    function moveObstacles(playerRect) {
-      let current = obstacleList.head;
-      let prev = null;
+      function move() {
+        if (!gameRunning) return;
+        posX += data.reverse ? data.speed : -data.speed;
+        if (data.bounce) {
+          posY += dy;
+          if (posY <= 0 || posY >= 88) dy *= -1;
+        }
+        obstacle.style.left = posX + "%";
+        obstacle.style.top = posY + "%";
 
-      while (current) {
-        let obstacle = current.data;
-        if (obstacle.reverse) obstacle.x += obstacle.speed;
-        else obstacle.x -= obstacle.speed;
-
-        if (obstacle.bounce) {
-          obstacle.y += obstacle.dy;
-          if (obstacle.y <= 0 || obstacle.y >= window.innerHeight - obstacle.height) {
-            obstacle.dy *= -1;
+        // Collision
+        const playerRect = player.getBoundingClientRect();
+        const obsRect = obstacle.getBoundingClientRect();
+        if (!(playerRect.right < obsRect.left || playerRect.left > obsRect.right ||
+              playerRect.bottom < obsRect.top || playerRect.top > obsRect.bottom)) {
+          lives--;
+          obstacle.remove();
+          if (lives <= 0) {
+            alert("Game Over! Final Score: " + score);
+            gameRunning = false;
           }
         }
 
-        obstacle.div.style.left = `${obstacle.x}px`;
-        obstacle.div.style.top = `${obstacle.y}px`;
-
-        if (
-          playerRect.left < obstacle.x + 50 &&
-          playerRect.right > obstacle.x &&
-          playerRect.top < obstacle.y + 50 &&
-          playerRect.bottom > obstacle.y
-        ) {
-          handleCollision();
-          obstacle.div.remove();
-          if (prev) prev.next = current.next;
-          else obstacleList.head = current.next;
-        } else if ((obstacle.reverse && obstacle.x > window.innerWidth + 60) || (!obstacle.reverse && obstacle.x < -60)) {
-          updateScore();
-          obstacle.div.remove();
-          if (prev) prev.next = current.next;
-          else obstacleList.head = current.next;
+        // Remove if out of bounds
+        if (posX < -15 || posX > 110) {
+          obstacle.remove();
+          score += 5;
+          document.getElementById("scoreDisplay").innerText = `Score: ${score} | Lives: ${lives}`;
         } else {
-          prev = current;
+          requestAnimationFrame(move);
         }
-        current = current.next;
       }
+      requestAnimationFrame(move);
     }
 
-    function updateLeaderboard() {
-      fetch("leaderboard.php")
-        .then(res => res.json())
-        .then(data => {
-          const tableBody = document.getElementById("leaderboardBody");
-          tableBody.innerHTML = "";
-          data.forEach(entry => {
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${entry.username}</td><td>${entry.highest}</td>`;
-            tableBody.appendChild(row);
-          });
-          document.getElementById("leaderboard").style.display = "block";
-        })
-        .catch(err => console.error("Error loading leaderboard:", err));
-    }
-
-    const button = document.getElementById("showLeaderboard");
-const leaderboard = document.getElementById("leaderboard");
-
-button.addEventListener("click", () => {
-  if (leaderboard.style.display === "block") {
-    leaderboard.style.display = "none";
-    button.textContent = "Show Leaderboard";
-  } else {
-    updateLeaderboard(); // Load and show
-    button.textContent = "Hide Leaderboard";
-  }
-});
-
-function gameLoop() {
-  if (!gameRunning) return; // 🔴 Stop loop if game is over
-
-  const playerRect = player.getBoundingClientRect();
-  moveObstacles(playerRect);
-  document.getElementById("scoreDisplay").innerHTML = `Score: ${score} | Lives: ${lives}`;
-  requestAnimationFrame(gameLoop);
-}
-
-
-    setInterval(createObstacle, 500);
-    gameLoop();
-
-    // This is a placeholder for the platform's rewarded ad SDK.
-// You will replace this with Poki, Lagged, or another platform's specific code.
-function showRewardedAd(onComplete, onFailed) {
-  console.log("Ad request initiated...");
-  // In a real game, you would call a function like Poki.SDK.showRewardedAd().
-  // For this example, we simulate a successful ad after 2 seconds.
-  setTimeout(() => {
-    console.log("Ad completed successfully!");
-    onComplete(true);
-  }, 2000);
-}
-
-// Function to handle the player's reward.
-// You can customize the reward (e.g., add points, coins, etc.).
-function handleReward() {
-  lives = 3;
-  score = score;
-  gameRunning = true;
-  document.getElementById("gameOverOptions").style.display = "none";
-  gameLoop();
-  console.log("Player rewarded! Lives restored.");
-}
-
-// Function called when the 'Revive with Ad' button is clicked.
-function reviveWithAd() {
-  showRewardedAd(
-    (success) => {
-      if (success) {
-        handleReward();
-      } else {
-        alert("Ad failed to load. Please try again.");
-      }
-    },
-    () => {
-      alert("Ad could not be loaded. Please try again.");
-    }
-  );
-}
-
-// Update your existing collision logic to show the ad option.
-function gameOver() {
-  gameRunning = false;
-  document.getElementById("gameOverOptions").style.display = "block";
-}
-    // Mobile control buttons
-document.getElementById("btnUp").addEventListener("click", () => {
-  if (currentLane > 0) currentLane--;
-  playerY = lanes[currentLane];
-  player.style.top = `${playerY}px`;
-});
-
-document.getElementById("btnDown").addEventListener("click", () => {
-  if (currentLane < lanes.length - 1) currentLane++;
-  playerY = lanes[currentLane];
-  player.style.top = `${playerY}px`;
-});
+    setInterval(createObstacle, 1200);
 
   </script>
-  <div id="gameOverOptions" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-  background:#222; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.7); text-align:center; z-index:10000;">
-  <h2 style="color:white; margin-bottom:20px;">Game Over!</h2>
-  <button onclick="reviveWithAd()" style="padding:10px 20px; margin: 10px; font-size: 16px; cursor: pointer; border-radius: 5px; background-color: #4CAF50; color: white; border: none;">Watch Ad for a Revive!</button>
-  <button onclick="location.reload()" style="padding:10px 20px; margin-right:20px; background:limegreen; border:none; border-radius:8px; color:white; font-size:16px; cursor:pointer;">
-    Restart
-  </button>
-  <a href="s2.html" style="padding:10px 20px; background:crimson; border:none; border-radius:8px; color:white; font-size:16px; text-decoration:none;">
-    Quit
-  </a>
-</div>
-  <!-- Mobile Controls -->
-<div id="mobileControls">
-  <button id="btnUp">⬆️</button>
-  <button id="btnDown">⬇️</button>
-</div>
-
 </body>
 </html>
-
-
