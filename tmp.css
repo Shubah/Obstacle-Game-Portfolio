@@ -1,0 +1,127 @@
+body {
+    background-image:url('https://i.pinimg.com/originals/55/01/60/5501609ee45d514d1f2c4a63502045e2.gif');
+    font-family: Arial, sans-serif;
+    padding: 50px;
+}
+
+.container {
+    display: flex;
+    border-radius: 82px;
+    justify-content: center;
+    gap: 40px; 
+    background-color: transparent;
+    box-shadow: none; 
+    padding: 30px;
+}
+@keyframes amn{
+    from{
+        background-color: whitesmoke}
+    to{
+        background-color: yellow;}
+}
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    position: fixed;
+    left: 710px;
+    top: 470px;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.success {
+    color: green;
+    text-align: center;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}
+
+.box2 {
+    background-color: whitesmoke;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    animation: amn 4s linear infinite;
+}
+.box1 {
+    background-color: yellow;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    height: 300px;
+    animation: amn1 2s linear infinite;
+}
+@keyframes amn1{
+    from{
+        background-color: yellow;}
+    to{
+        background-color: red;}
+}
+#in1{     background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        position: fixed;
+        left: 945px;
+        top: 560px;
+    }
+    #in2{
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        position: fixed;
+        left: 490px;
+        top: 450px;
+    }
