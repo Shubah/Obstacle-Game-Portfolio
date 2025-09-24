@@ -198,7 +198,7 @@
   </div>
   <div id="box"></div>
   <marquee class="marq" bgcolor="Green" direction="left" loop="">
-    <div class="geek1">Press ArrowUp or ArrowDown key to move! HOPE YOU LOVED THE GAME.VISIT AGAIN!</div>
+    <div class="geek1">Swipe up or down to move! Press ArrowUp or ArrowDown on PC! HOPE YOU LOVED THE GAME.VISIT AGAIN!</div>
   </marquee>
   <audio id="bgMusic" src="victory-awaits-in-the-gaming-universe_astronaut-265184.mp3" loop autoplay></audio>
   <audio id="coinSound" src="coin.wav"></audio>
@@ -273,20 +273,49 @@
     const obstacleList = new LinkedList();
     const highScoreTree = new BinaryTree();
     let score = 0, lives = 3;
+    let touchStartY = null;
+
     const coinSound = document.getElementById("coinSound");
     const crashSound = document.getElementById("crashSound");
+
+    // Keyboard controls (for PC/laptop)
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" && currentLane > 0) currentLane--;
       if (e.key === "ArrowDown" && currentLane < lanes.length - 1) currentLane++;
       playerY = lanes[currentLane];
       player.style.top = `${playerY}px`;
     });
+
+    // Touch controls (for phone)
+    document.addEventListener("touchstart", (e) => {
+      touchStartY = e.touches[0].clientY;
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (touchStartY === null) return;
+
+      const touchMoveY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchMoveY;
+
+      if (deltaY > 50 && currentLane > 0) { // Swipe up
+        currentLane--;
+        touchStartY = touchMoveY; // Update start position to prevent multiple moves
+      } else if (deltaY < -50 && currentLane < lanes.length - 1) { // Swipe down
+        currentLane++;
+        touchStartY = touchMoveY; // Update start position to prevent multiple moves
+      }
+
+      playerY = lanes[currentLane];
+      player.style.top = `${playerY}px`;
+    }, { passive: false });
+
     function updateScore() {
       score += 5;
       scoreStack.push(score);
       coinSound.currentTime = 0;
       coinSound.play();
     }
+
     function handleCollision() {
       crashSound.currentTime = 0;
       crashSound.play();
@@ -317,6 +346,7 @@
         });
       }
     }
+
     function createObstacle() {
       const types = [
         { type: "normal", speed: 3, bounce: false, reverse: false },
@@ -326,15 +356,15 @@
       ];
       const obstacleData = types[Math.floor(Math.random() * types.length)];
       const obstacle = {
-        x: obstacleData.reverse ? -200 : window.innerWidth,
+        x: obstacleData.reverse ? -60 : window.innerWidth,
         y: lanes[Math.floor(Math.random() * lanes.length)],
         speed: obstacleData.speed,
         type: obstacleData.type,
         bounce: obstacleData.bounce,
         reverse: obstacleData.reverse,
         dy: obstacleData.bounce ? 3 : 0,
-        width: 200,
-        height: 200,
+        width: 50,
+        height: 50,
         div: document.createElement("div")
       };
       obstacle.div.className = `obstacle ${obstacle.type}`;
@@ -343,6 +373,7 @@
       document.body.appendChild(obstacle.div);
       obstacleList.add(obstacle);
     }
+
     function moveObstacles(playerRect) {
       let current = obstacleList.head;
       let prev = null;
@@ -368,7 +399,7 @@
           obstacle.div.remove();
           if (prev) prev.next = current.next;
           else obstacleList.head = current.next;
-        } else if ((obstacle.reverse && obstacle.x > window.innerWidth + 200) || (!obstacle.reverse && obstacle.x < -200)) {
+        } else if ((obstacle.reverse && obstacle.x > window.innerWidth + 60) || (!obstacle.reverse && obstacle.x < -60)) {
           updateScore();
           obstacle.div.remove();
           if (prev) prev.next = current.next;
@@ -379,6 +410,7 @@
         current = current.next;
       }
     }
+
     function updateLeaderboard() {
       fetch("leaderboard.php")
         .then(res => res.json())
@@ -394,6 +426,7 @@
         })
         .catch(err => console.error("Error loading leaderboard:", err));
     }
+
     const button = document.getElementById("showLeaderboard");
     const leaderboard = document.getElementById("leaderboard");
     button.addEventListener("click", () => {
@@ -405,6 +438,7 @@
         button.textContent = "Hide Leaderboard";
       }
     });
+
     function gameLoop() {
       if (!gameRunning) return;
       const playerRect = player.getBoundingClientRect();
@@ -412,8 +446,10 @@
       document.getElementById("scoreDisplay").innerHTML = `Score: ${score} | Lives: ${lives}`;
       requestAnimationFrame(gameLoop);
     }
+
     setInterval(createObstacle, 500);
     gameLoop();
+
     function showRewardedAd(onComplete, onFailed) {
       console.log("Ad request initiated...");
       setTimeout(() => {
@@ -421,6 +457,7 @@
         onComplete(true);
       }, 2000);
     }
+
     function handleReward() {
       lives = 3;
       score = score;
@@ -429,6 +466,7 @@
       gameLoop();
       console.log("Player rewarded! Lives restored.");
     }
+
     function reviveWithAd() {
       showRewardedAd(
         (success) => {
@@ -443,6 +481,7 @@
         }
       );
     }
+
     function gameOver() {
       gameRunning = false;
       document.getElementById("gameOverOptions").style.display = "block";
